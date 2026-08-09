@@ -410,6 +410,31 @@ async function syncAll() {
   render();
 }
 
+function detectSubject(title) {
+  const t = (title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (/portugu[eê]s|redac|leitura|literatura|gramatica|portugues/.test(t)) return 'Português';
+  if (/historia|revolucao|guerra|historia/.test(t)) return 'História';
+  if (/geografia|geopolitica|cartografia|geo/.test(t)) return 'Geografia';
+  if (/quimica|reacao|atomos|quim/.test(t)) return 'Química';
+  if (/biologia|celula|ecologia|genetica|bio|fotossintese/.test(t)) return 'Biologia';
+  if (/fisica|cinematica|dinamica|eletric|fis/.test(t)) return 'Física';
+  if (/matematica|calculo|algebra|geometria|mat|funcao|equacao/.test(t)) return 'Matemática';
+  if (/ingles|english|ielts|pet|cambridge|red balloon|writing|reading/.test(t)) return 'Inglês';
+  if (/literatura|machado|eça|conto|romance|poesia|lit/.test(t)) return 'Literatura';
+  return 'Outro';
+}
+
+function detectType(title) {
+  const t = (title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (/prova|test|exam|avaliacao/.test(t)) return 'Prova';
+  if (/trabalho|projeto/.test(t)) return 'Trabalho';
+  if (/lista|exerc/.test(t)) return 'Lista';
+  if (/apresenta|seminario/.test(t)) return 'Apresentação';
+  if (/redac|escrita/.test(t)) return 'Redação';
+  if (/aula/.test(t)) return 'Aula';
+  return 'Evento';
+}
+
 async function syncCalendar() {
   const now = new Date();
   const monday = getMonday(now);
@@ -422,7 +447,10 @@ async function syncCalendar() {
   (data.items||[]).forEach(ev=>{
     const dateStr = ev.start?.date || ev.start?.dateTime?.slice(0,10);
     if (!dateStr) return;
-    tasks.push({ id:'gcal_'+ev.id, title:ev.summary||'Evento', subject:'Outro', type:'Evento', date:dateStr, note:ev.description||'', done:false, source:'gcal' });
+    const title = ev.summary || 'Evento';
+    const subject = detectSubject(title);
+    const type = detectType(title);
+    tasks.push({ id:'gcal_'+ev.id, title, subject, type, date:dateStr, note:ev.description||'', done:false, source:'gcal' });
   });
   saveTasks(tasks);
 }
