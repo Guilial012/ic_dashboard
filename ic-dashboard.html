@@ -264,7 +264,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="login-card">
     <div class="login-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div>
     <p class="login-title">IC Dashboard</p>
-    <p class="login-sub">Organize suas tarefas escolares, horários e atividades em um só lugar.</p>
+    <p class="login-sub">Instituto Capibaribe — Fundamental 2</p>
+    <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
+      <label style="font-size:12px;color:var(--ts);">Sua turma</label>
+      <select id="login-turma" style="padding:9px 11px;border-radius:var(--r);border:.5px solid var(--bds);background:var(--s1);color:var(--tp);font-size:13px;font-family:inherit;width:100%;outline:none;">
+        <option value="">Selecione sua turma...</option>
+        <option>6º ano A</option><option>6º ano B</option>
+        <option>7º ano A</option><option>7º ano B</option><option>7º ano C</option>
+        <option>8º ano A</option><option>8º ano B</option>
+        <option>9º ano A</option><option>9º ano B</option>
+      </select>
+    </div>
     <button class="google-btn" onclick="doLogin()">
       <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
       Entrar com Google
@@ -283,22 +293,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="setup-card">
-    <h2>Configure sua grade horária</h2>
-    <p>Preencha os dados da sua escola e turma. Você pode editar isso a qualquer momento nas configurações.</p>
+    <h2>Configurações da turma</h2>
+    <p>Selecione sua turma do IC para carregar a grade automaticamente, ou preencha manualmente se for de outra escola.</p>
+
     <div class="setup-section">
-      <div class="setup-section-title">Informações</div>
-      <div class="setup-field-row">
-        <div class="setup-field"><label>Nome da escola</label><input type="text" id="cfg-school" placeholder="Ex: Instituto Capibaribe"/></div>
-        <div class="setup-field"><label>Turma / Ano</label><input type="text" id="cfg-class" placeholder="Ex: 9º ano A"/></div>
+      <div class="setup-section-title">🏫 Instituto Capibaribe — carregar automaticamente</div>
+      <div style="display:flex;gap:10px;align-items:flex-end;">
+        <div class="setup-field" style="flex:1">
+          <label>Turma</label>
+          <select id="cfg-ic-turma" onchange="loadICSchedule()" style="padding:9px 11px;border-radius:var(--r);border:.5px solid var(--bds);background:var(--s1);color:var(--tp);font-size:13px;font-family:inherit;outline:none;">
+            <option value="">Selecione a turma...</option>
+            <option>6º ano A</option><option>6º ano B</option>
+            <option>7º ano A</option><option>7º ano B</option><option>7º ano C</option>
+            <option>8º ano A</option><option>8º ano B</option>
+            <option>9º ano A</option><option>9º ano B</option>
+          </select>
+        </div>
+        <div id="ic-loaded-badge" style="display:none;padding:8px 12px;border-radius:var(--r);background:var(--ok-bg);color:var(--ok);font-size:12px;font-weight:500;white-space:nowrap;">✓ Grade carregada</div>
       </div>
     </div>
-    <div class="setup-section">
-      <div class="setup-section-title">Horários de aula — preencha as matérias de cada período</div>
+
+    <div class="setup-section" style="border-top:.5px solid var(--bd);padding-top:1rem;">
+      <div class="setup-section-title">✏️ Outra escola — preencher manualmente</div>
+      <div class="setup-field-row" style="margin-bottom:10px;">
+        <div class="setup-field"><label>Nome da escola</label><input type="text" id="cfg-school" placeholder="Ex: Colégio Dom Bosco"/></div>
+        <div class="setup-field"><label>Turma / Ano</label><input type="text" id="cfg-class" placeholder="Ex: 2º ano B"/></div>
+      </div>
+      <div class="setup-section-title" style="margin-bottom:8px;">Horários de aula</div>
       <div class="schedule-grid" id="setup-grid"></div>
     </div>
+
     <div class="setup-actions">
       <button class="btn-setup-cancel" id="setup-cancel-btn" onclick="cancelSetup()" style="display:none">Cancelar</button>
-      <button class="btn-setup-save" onclick="saveSetup()">Salvar e entrar</button>
+      <button class="btn-setup-save" onclick="saveSetup()">Salvar</button>
     </div>
   </div>
 </div>
@@ -480,14 +507,51 @@ const DAY_NAMES=['Seg','Ter','Qua','Qui','Sex'];
 const DAY_FULL=['Segunda','Terça','Quarta','Quinta','Sexta'];
 const COURSE_COLORS=['#4f46e5','#0891b2','#16a34a','#d97706','#dc2626','#7c3aed','#0369a1','#be185d'];
 
-// Default IC schedule
-const IC_SCHEDULE={
-  0:[{time:'13h25',subject:'Artes Cênicas'},{time:'14h15',subject:'Português'},{time:'15h00',subject:'Português'},{time:'15h40',subject:'Intervalo'},{time:'16h25',subject:'Biologia'},{time:'17h10',subject:'Matemática'},{time:'17h55',subject:'Matemática'},{time:'18h40',subject:'Saída'}],
-  1:[{time:'13h25',subject:'Arte/Música'},{time:'14h15',subject:'Arte/Música'},{time:'15h00',subject:'Matemática'},{time:'15h40',subject:'Intervalo'},{time:'16h25',subject:'Ed. Física'},{time:'17h10',subject:'Física'},{time:'17h55',subject:'Física'},{time:'18h40',subject:'Saída'}],
-  2:[{time:'13h25',subject:'História'},{time:'14h15',subject:'História'},{time:'15h00',subject:'Português'},{time:'15h40',subject:'Intervalo'},{time:'16h25',subject:'Português'},{time:'17h10',subject:'Filosofia'},{time:'17h55',subject:'Matemática'},{time:'18h40',subject:'Saída'}],
-  3:[{time:'13h25',subject:'Geografia'},{time:'14h15',subject:'Geografia'},{time:'15h00',subject:'Inglês'},{time:'15h40',subject:'Intervalo'},{time:'16h25',subject:'História'},{time:'17h10',subject:'Matemática'},{time:'17h55',subject:'Matemática'},{time:'18h40',subject:'Saída'}],
-  4:[{time:'13h25',subject:'Química'},{time:'14h15',subject:'Química'},{time:'15h00',subject:'SOE'},{time:'15h40',subject:'Intervalo'},{time:'16h25',subject:'Português'},{time:'17h10',subject:'Inglês'},{time:'17h55',subject:'Ed. Física'},{time:'18h40',subject:'Saída'}],
+// ===== GRADES DO IC — todas as turmas do Fundamental 2 =====
+const IC_TURMAS_RAW={
+  '6º ano A':{0:['História','História','Intervalo','SOE','Inglês','Português','Português','Saída'],1:['Matemática','Matemática','Intervalo','Arte/Música','Arte/Música','Ciências','Ciências','Saída'],2:['Artes Cênicas','Artes Cênicas','Intervalo','Inglês','Educação Física','Português','Português','Saída'],3:['Matemática','Matemática','Intervalo','História','Geografia','Ciências','Educação Física','Saída'],4:['Matemática','Tecnologia','Intervalo','Português','Português','Geografia','Geografia','Saída']},
+  '6º ano B':{0:['Inglês','SOE','Intervalo','Português','Português','História','História','Saída'],1:['Ciências','Ciências','Intervalo','Matemática','Matemática','Arte/Música','Arte/Música','Saída'],2:['Tecnologia','Português','Intervalo','Artes Cênicas','Artes Cênicas','Ed. Física','Inglês','Saída'],3:['Ciências','Prática Literária','Intervalo','Matemática','Matemática','Geografia','Educação Física','Saída'],4:['Geografia','Geografia','Intervalo','História','Matemática','Português','Português','Saída']},
+  '7º ano A':{0:['Geografia','Geografia','Intervalo','Inglês','História','Matemática','Matemática','Saída'],1:['História','História','Intervalo','Português','Português','Artes Cênicas','Artes Cênicas','Saída'],2:['Português','Inglês','Intervalo','Ciências','Ciências','Matemática','Matemática','Saída'],3:['Educação Física','Ciências','Intervalo','Português','Português','Arte/Música','Arte/Música','Saída'],4:['SOE','Prática Literária','Intervalo','Tecnologia','Geografia','Educação Física','Matemática','Saída']},
+  '7º ano B':{0:['Tecnologia','Inglês','Intervalo','Matemática','Matemática','Geografia','Geografia','Saída'],1:['Português','Português','Intervalo','Artes Cênicas','Artes Cênicas','História','História','Saída'],2:['Ciências','Ciências','Intervalo','Matemática','Matemática','Inglês','Educação Física','Saída'],3:['Português','Geografia','Intervalo','Arte/Música','Arte/Música','História','Ciências','Saída'],4:['Português','Português','Intervalo','Prática Literária','Educação Física','Matemática','SOE','Saída']},
+  '7º ano C':{0:['Matemática','Matemática','Intervalo','Geografia','Geografia','Inglês','Tecnologia','Saída'],1:['Artes Cênicas','Artes Cênicas','Intervalo','História','História','Português','Português','Saída'],2:['Matemática','Matemática','Intervalo','Português','Inglês','Ciências','Ciências','Saída'],3:['Arte/Música','Arte/Música','Intervalo','Ciências','Educação Física','Português','Português','Saída'],4:['História','Matemática','Intervalo','Geografia','Educação Física','SOE','Prática Literária','Saída']},
+  '8º ano A':{0:['Português','Artes Cênicas','Artes Cênicas','Intervalo','Educação Física','Ciências','Ciências','Saída'],1:['Educação Física','Português','Português','Intervalo','Ciências','Matemática','Matemática','Saída'],2:['Português','Português','Matemática','Intervalo','Matemática','Arte/Música','Arte/Música','Saída'],3:['Filosofia','SOE','Geografia','Intervalo','Geografia','Inglês','História','Saída'],4:['Tecnologia','Matemática','Matemática','Intervalo','Inglês','História','História','Saída']},
+  '8º ano B':{0:['SOE','Ciências','Ciências','Intervalo','Matemática','Artes Cênicas','Artes Cênicas','Saída'],1:['Matemática','Matemática','Ciências','Intervalo','Português','Português','Educação Física','Saída'],2:['Matemática','Matemática','Arte/Música','Intervalo','Arte/Música','Português','Português','Saída'],3:['Inglês','Educação Física','Filosofia','Intervalo','História','Geografia','Geografia','Saída'],4:['Inglês','História','História','Intervalo','Matemática','Português','Tecnologia','Saída']},
+  '9º ano A':{0:['SOE','Matemática','Matemática','Intervalo','Biologia','Português','Português','Saída'],1:['Português','Geografia','Geografia','Intervalo','Ed. Física','Física','Física','Saída'],2:['Arte/Música','Arte/Música','História','Intervalo','História','Português','Português','Saída'],3:['Ed. Física','Inglês','Filosofia','Intervalo','Matemática','Matemática','História','Saída'],4:['Art. Cên.','Art. Cên.','Química','Intervalo','Química','Matemática','Matemática','Saída']},
+  '9º ano B':{0:['Biologia','Matemática','Matemática','Intervalo','Português','Português','Educação Física','Saída'],1:['Português','Geografia','Geografia','Intervalo','Educação Física','SOE','Português','Saída'],2:['Arte/Música','Arte/Música','Filosofia','Intervalo','História','Física','Física','Saída'],3:['Artes Cênicas','Matemática','Matemática','Intervalo','Inglês','História','História','Saída'],4:['Português','Inglês','Química','Intervalo','Química','Matemática','Matemática','Saída']},
 };
+const IC_TIMES=['13h25','14h15','15h00','15h40','16h25','17h10','17h55','18h40'];
+
+function rawToSchedule(raw){
+  const sched={};
+  [0,1,2,3,4].forEach(di=>{
+    sched[di]=(raw[di]||[]).map((sub,ti)=>({time:IC_TIMES[ti],subject:sub}));
+  });
+  return sched;
+}
+
+// Fallback default (9º ano A)
+const IC_SCHEDULE=rawToSchedule(IC_TURMAS_RAW['9º ano A']);
+
+// Called when user picks a turma in setup
+function loadICSchedule(){
+  const turma=document.getElementById('cfg-ic-turma').value;
+  if(!turma){document.getElementById('ic-loaded-badge').style.display='none';return;}
+  const raw=IC_TURMAS_RAW[turma];
+  if(!raw){return;}
+  // Fill the manual grid with the IC data
+  IC_TIMES.forEach((t,ti)=>{
+    [0,1,2,3,4].forEach(di=>{
+      const el=document.querySelector(`.sg-cell[data-day="${di}"][data-slot="${ti}"]`);
+      if(el)el.value=raw[di]?.[ti]||'';
+    });
+  });
+  // Set school/class name fields
+  document.getElementById('cfg-school').value='Instituto Capibaribe';
+  document.getElementById('cfg-class').value=turma;
+  document.getElementById('ic-loaded-badge').style.display='flex';
+}
+
+
 const DEFAULT_TIMES=['13h25','14h15','15h00','15h40','16h25','17h10','17h55','18h40'];
 
 let accessToken=null,classroomData=[],addedToBoard=new Set(JSON.parse(localStorage.getItem('ic_added_cw')||'[]'));
@@ -513,9 +577,19 @@ function getSubjectList(){
 // ---- SETUP SCREEN ----
 function openSetup(){
   const cfg=loadConfig();
-  document.getElementById('cfg-school').value=cfg?.school||'Instituto Capibaribe';
-  document.getElementById('cfg-class').value=cfg?.className||'9º ano A';
-  buildSetupGrid(cfg?.schedule||IC_SCHEDULE);
+  document.getElementById('cfg-school').value=cfg?.school||'';
+  document.getElementById('cfg-class').value=cfg?.className||'';
+  const sched=cfg?.schedule||rawToSchedule(IC_TURMAS_RAW['9º ano A']);
+  buildSetupGrid(sched);
+  // Pre-select IC turma if applicable
+  const icSel=document.getElementById('cfg-ic-turma');
+  if(cfg?.school==='Instituto Capibaribe'&&IC_TURMAS_RAW[cfg?.className]){
+    icSel.value=cfg.className;
+    document.getElementById('ic-loaded-badge').style.display='flex';
+  } else {
+    icSel.value='';
+    document.getElementById('ic-loaded-badge').style.display='none';
+  }
   document.getElementById('setup-cancel-btn').style.display=loadConfig()?'block':'none';
   document.getElementById('app-screen').classList.remove('visible');
   document.getElementById('setup-screen').classList.add('visible');
@@ -663,13 +737,21 @@ function fetchUserInfo(){
 function showApp(u){
   const cfg=loadConfig();
   if(!cfg){
-    // First time: go to setup
-    document.getElementById('login-screen').style.display='none';
-    openSetup();
-    // Pre-fill IC defaults for Guilherme
-    document.getElementById('cfg-school').value='Instituto Capibaribe';
-    document.getElementById('cfg-class').value='9º ano A';
-    return;
+    // First time: check if turma was selected on login screen
+    const loginTurma=document.getElementById('login-turma')?.value;
+    if(loginTurma&&IC_TURMAS_RAW[loginTurma]){
+      // Auto-save config from selected turma
+      saveConfig({school:'Instituto Capibaribe',className:loginTurma,schedule:rawToSchedule(IC_TURMAS_RAW[loginTurma])});
+    } else {
+      // Go to setup for manual config
+      document.getElementById('login-screen').style.display='none';
+      openSetup();
+      if(loginTurma){
+        document.getElementById('cfg-ic-turma').value=loginTurma;
+        loadICSchedule();
+      }
+      return;
+    }
   }
   document.getElementById('login-screen').style.display='none';
   document.getElementById('setup-screen').classList.remove('visible');
